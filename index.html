@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אקדמיית אסטראליה | האקדמיה הגבוהה לאומנויות הכישוף והקסם</title>
+    
+    <!-- טעינת גופנים מרשימים בעברית מ-Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;600;700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- טעינת Tailwind CSS לעיצוב רספונסיבי ונקי -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- הגדרת תצורת צבעים ופונטים מותאמים אישית ל-Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: '#070a19',
+                        deepblue: '#0f1636',
+                        royalpurple: '#241445',
+                        mysticpurple: '#3b1e6d',
+                        antiquegold: '#d4af37',
+                        lightgold: '#f3e5ab',
+                        parchment: '#f8f5ec'
+                    },
+                    fontFamily: {
+                        serif: ['"Frank Ruhl Libre"', 'serif'],
+                        sans: ['"Heebo"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 20px rgba(212, 175, 55, 0.25)',
+                        'gold-glow-strong': '0 0 30px rgba(212, 175, 55, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* סגנונות בסיס ואווירה קסומה */
+        body {
+            background: radial-gradient(ellipse at top, #1b1138 0%, #090d24 55%, #040612 100%);
+            color: #e2e8f0;
+            font-family: 'Heebo', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, .font-mystic {
+            font-family: 'Frank Ruhl Libre', serif;
+        }
+
+        /* שכבת כוכבים ונצנוצים ברקע */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #f3e5ab;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 4s) infinite ease-in-out;
+            opacity: var(--opacity, 0.6);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.15; transform: scale(0.8); }
+            50% { opacity: 0.9; transform: scale(1.25); box-shadow: 0 0 8px #d4af37; }
+        }
+
+        /* אנימציית מעבר חלקה בין עמודי SPA */
+        .page-section {
+            display: none;
+            animation: fadeInPage 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+                filter: blur(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* עיצוב כרטיסיות עם מסגרת זהב עדינה ואפקט ריחוף */
+        .mystic-card {
+            background: linear-gradient(145deg, rgba(20, 26, 58, 0.78) 0%, rgba(12, 14, 34, 0.88) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.28);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mystic-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(212, 175, 55, 0.85);
+            box-shadow: 0 12px 32px -5px rgba(0, 0, 0, 0.7), 0 0 22px rgba(212, 175, 55, 0.28);
+        }
+
+        /* כפתור זהב קסום */
+        .btn-gold {
+            background: linear-gradient(135deg, #d4af37 0%, #aa821c 100%);
+            color: #070a19;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.65);
+            transform: translateY(-2px);
+        }
+
+        /* כפתור משני שקוף עם מסגרת זהב */
+        .btn-outline-gold {
+            border: 1.5px solid #d4af37;
+            color: #f3e5ab;
+            background: rgba(212, 175, 55, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gold:hover {
+            background: rgba(212, 175, 55, 0.18);
+            box-shadow: 0 0 18px rgba(212, 175, 55, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* הדגשת פריט תפריט פעיל */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, #f3e5ab);
+            transition: width 0.35s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: #f3e5ab;
+            text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+        }
+
+        /* קו מפריד מעוטר */
+        .ornate-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem auto;
+            max-width: 320px;
+        }
+
+        .ornate-divider::before,
+        .ornate-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
+        }
+
+        /* סגנון שדות טופס */
+        .mystic-input {
+            background-color: rgba(7, 10, 25, 0.75);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: #f8f5ec;
+            transition: all 0.3s ease;
+        }
+
+        .mystic-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
+            background-color: rgba(15, 22, 54, 0.9);
+        }
+
+        /* סרגל גלילה מותאם */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070a19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b1e6d;
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-antiquegold selection:text-midnight">
+
+    <!-- שכבת כוכבים מונפשת ברקע -->
+    <div id="starfield" aria-hidden="true"></div>
+
+    <!-- תפריט ניווט עליון קבוע ורספונסיבי -->
+    <header class="sticky top-0 z-50 bg-midnight/85 backdrop-blur-md border-b border-antiquegold/30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- לוגו האקדמיה (לחיצה מחזירה לדף הבית) -->
+                <button onclick="navigateTo('home')" class="flex items-center gap-3 group text-right focus:outline-none">
+                    <div class="w-11 h-11 rounded-full bg-gradient-to-br from-mysticpurple to-midnight border border-antiquegold flex items-center justify-center shadow-gold-glow group-hover:scale-105 transition-transform">
+                        <!-- סמל כוכב וירח SVG -->
+                        <svg class="w-6 h-6 text-antiquegold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="block font-mystic text-xl sm:text-2xl font-bold text-lightgold tracking-wide">אקדמיית אסטראליה</span>
+                        <span class="block text-xs text-antiquegold/80 tracking-widest">לאומנויות הכישוף והקסם</span>
+                    </div>
+                </button>
+
+                <!-- קישורי ניווט למסכים גדולים (Desktop) -->
+                <nav class="hidden md:flex items-center gap-8" aria-label="תפריט ראשי">
+                    <button onclick="navigateTo('home')" data-nav="home" class="nav-link active text-base font-medium text-slate-200 hover:text-lightgold py-1">
+                        דף בית
+                    </button>
+                    <button onclick="navigateTo('courses')" data-nav="courses" class="nav-link text-base font-medium text-slate-200 hover:text-lightgold py-1">
+                        מה אנחנו מציעים
+                    </button>
+                    <button onclick="navigateTo('about')" data-nav="about" class="nav-link text-base font-medium text-slate-200 hover:text-lightgold py-1">
+                        אודות
+                    </button>
+                    <button onclick="navigateTo('contact')" data-nav="contact" class="nav-link text-base font-medium text-slate-200 hover:text-lightgold py-1">
+                        צור קשר
+                    </button>
+                </nav>
+
+                <!-- כפתור הרשמה מהיר בדסקטופ -->
+                <div class="hidden md:block">
+                    <button onclick="navigateTo('contact')" class="btn-gold px-5 py-2.5 rounded-full text-sm tracking-wide shadow-gold-glow">
+                        הגשת מועמדות ✦
+                    </button>
+                </div>
+
+                <!-- כפתור תפריט המבורגר למובייל -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="פתח תפריט ניווט" aria-expanded="false" class="p-2.5 rounded-xl border border-antiquegold/40 text-lightgold hover:bg-antiquegold/10 focus:outline-none">
+                        <svg id="icon-hamburger" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- תפריט נפתח למובייל -->
+        <div id="mobile-menu" class="hidden md:hidden bg-deepblue/95 border-b border-antiquegold/30 px-4 pt-3 pb-6 space-y-2 backdrop-blur-xl">
+            <button onclick="navigateTo('home')" data-nav="home" class="mobile-nav-link block w-full text-right px-4 py-3 rounded-xl text-base font-medium text-lightgold bg-antiquegold/15 border border-antiquegold/30">
+                ✦ דף בית
+            </button>
+            <button onclick="navigateTo('courses')" data-nav="courses" class="mobile-nav-link block w-full text-right px-4 py-3 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5">
+                ✦ מה אנחנו מציעים
+            </button>
+            <button onclick="navigateTo('about')" data-nav="about" class="mobile-nav-link block w-full text-right px-4 py-3 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5">
+                ✦ אודות האקדמיה
+            </button>
+            <button onclick="navigateTo('contact')" data-nav="contact" class="mobile-nav-link block w-full text-right px-4 py-3 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5">
+                ✦ צור קשר והרשמה
+            </button>
+        </div>
+    </header>
+
+    <!-- אזור התוכן המרכזי (מכיל את 4 עמודי ה-SPA) -->
+    <main class="relative z-10 flex-grow">
+
+        <!-- =========================================================
+             עמוד 1: דף בית (HOME)
+        ========================================================== -->
+        <section id="page-home" class="page-section active">
+            <!-- חלק עליון (Hero Section) -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-mysticpurple/60 border border-antiquegold/40 text-lightgold text-xs sm:text-sm mb-6 shadow-gold-glow">
+                    <span>✧</span>
+                    <span>ההרשמה לשנת הלימודים האסטרלית ה-942 נפתחה כעת</span>
+                    <span>✧</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-lightgold via-antiquegold to-amber-600 leading-tight mb-6 drop-shadow-sm">
+                    גלו את הכוח החבוי בכם<br class="hidden sm:inline"> בין כותלי המסתורין
+                </h1>
+
+                <p class="max-w-2xl mx-auto text-base sm:text-xl text-slate-300 font-light leading-relaxed mb-10">
+                    מעבר לערפל הנצחי של הרי הקדם שוכנת <strong class="text-lightgold font-medium">אקדמיית אסטראליה</strong> – המוסד העתיק והיוקרתי בעולם להכשרת קוסמים, אלכימאים וחוקרי נסתר. כאן תילמדו לשלוט באיתני הטבע, לרקוח שיקויים נדירים ולפענח את שפת הכוכבים.
+                </p>
+
+                <!-- כפתורי הנעה לפעולה (CTA) -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                    <button onclick="navigateTo('courses')" class="btn-gold w-full sm:w-auto px-8 py-4 rounded-xl text-lg shadow-gold-glow">
+                        גלו את מסלולי הלימוד ✦
+                    </button>
+                    <button onclick="navigateTo('contact')" class="btn-outline-gold w-full sm:w-auto px-8 py-4 rounded-xl text-lg font-medium">
+                        שלחו מכתב ינשוף להרשמה
+                    </button>
+                </div>
+
+                <!-- אלמנט קישוט מפריד -->
+                <div class="ornate-divider mt-16">
+                    <span class="text-antiquegold text-xl">❖</span>
+                </div>
+            </div>
+
+            <!-- הצצה לחיי האקדמיה - 3 כרטיסיות -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-lightgold mb-3">הצצה אל מאחורי הפרגוד</h2>
+                    <p class="text-slate-400 max-w-xl mx-auto">שלושה מעמודי התווך שהופכים את השהות באסטראליה לחוויה משנה חיים</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- כרטיסייה 1: סגל מרצים -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-mysticpurple/70 border border-antiquegold/50 flex items-center justify-center mb-6 text-antiquegold shadow-gold-glow">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-lightgold mb-3">סגל רבי-אומנים</h3>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                לימוד אישי בהנחיית המכשפים המובילים בדורנו – חוקרי קסם עתיק, מגיני ממלכות ואלכימאים בעלי שם עולמי המלווים כל חניך באופן אישי.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('about')" class="text-antiquegold hover:text-lightgold font-medium inline-flex items-center gap-2 text-sm group">
+                            <span>הכירו את הסגל הבכיר</span>
+                            <span class="group-hover:-translate-x-1 transition-transform">←</span>
+                        </button>
+                    </div>
+
+                    <!-- כרטיסייה 2: ספרייה עתיקה -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-mysticpurple/70 border border-antiquegold/50 flex items-center justify-center mb-6 text-antiquegold shadow-gold-glow">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-lightgold mb-3">הספרייה האסורה והעתיקה</h3>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                אוסף של למעלה מ-40,000 מגילות קלף, ספרי לחשים לוחשים ואטלסים שמימיים שנאספו במשך אלף שנים מכל קצוות תבל.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('about')" class="text-antiquegold hover:text-lightgold font-medium inline-flex items-center gap-2 text-sm group">
+                            <span>קראו על ההיסטוריה שלנו</span>
+                            <span class="group-hover:-translate-x-1 transition-transform">←</span>
+                        </button>
+                    </div>
+
+                    <!-- כרטיסייה 3: מעבדות שיקויים -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-mysticpurple/70 border border-antiquegold/50 flex items-center justify-center mb-6 text-antiquegold shadow-gold-glow">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-lightgold mb-3">מעבדות האלכימיה התת-קרקעיות</h3>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                מערות בזלת מוגנות לחשים המצוידות בקדרות כסף, חממות צמחי מרפא נדירים ומעבדות זיקוק מתקדמות להתנסות מעשית יומיומית.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('courses')" class="text-antiquegold hover:text-lightgold font-medium inline-flex items-center gap-2 text-sm group">
+                            <span>לכל הקורסים והמעבדות</span>
+                            <span class="group-hover:-translate-x-1 transition-transform">←</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             עמוד 2: מה אנחנו מציעים (COURSES / WHAT WE OFFER)
+        ========================================================== -->
+        <section id="page-courses" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-antiquegold text-sm tracking-widest uppercase block mb-2">תוכנית הלימודים האסטרלית</span>
+                    <h1 class="text-4xl sm:text-5xl font-bold text-lightgold mb-4">מסלולי הכשרה וקורסים קסומים</h1>
+                    <p class="text-slate-300 text-lg">
+                        תוכנית הלימודים משלבת תיאוריה עתיקה עם תרגול מעשי אינטנסיבי. בחרו את תחום ההתמחות המרכזי שלכם או שלבו בין מספר דיסציפלינות.
+                    </p>
+                    <div class="ornate-divider">
+                        <span class="text-antiquegold">✦</span>
+                    </div>
+                </div>
+
+                <!-- רשת כרטיסיות הקורסים -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- קורס 1: רוקחות ושיקויים מתקדמים -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">
+                                    רמת קושי: מתקדמים
+                                </span>
+                                <span class="text-sm text-antiquegold font-medium flex items-center gap-1.5">
+                                    <span>⏳</span> משך הקורס: 2 סמסטרים
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-2xl">
+                                    🧪
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-bold text-lightgold">רוקחות ושיקויים מתקדמים</h2>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                צלילה אל מעמקי האלכימיה העדינה: זיקוק טל ירח, בישול שיקויי ריפוי נדירים, שיקויי שינוי צורה ונטרול רעלים עתיקים. הקורס מתקיים במעבדות הבזלת תחת השגחה צמודה.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-400 mb-6 border-t border-antiquegold/20 pt-4">
+                                <li>✦ זיהוי וליקוט צמחי פלא בחממות האקדמיה</li>
+                                <li>✦ דיוק בטמפרטורות בישול ובחישה נגד כיוון השעון</li>
+                                <li>✦ מבחן מעשי: רקיחת שיקוי האמת הצלולה</li>
+                            </ul>
+                        </div>
+                        <button onclick="selectCourseAndContact('רוקחות ושיקויים מתקדמים')" class="btn-outline-gold w-full py-3 rounded-xl font-medium text-center">
+                            הרשמה למסלול זה ✦
+                        </button>
+                    </div>
+
+                    <!-- קורס 2: אומנות השרביט ולחשי הגנה -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-950/80 text-amber-300 border border-amber-500/40">
+                                    רמת קושי: כל הרמות
+                                </span>
+                                <span class="text-sm text-antiquegold font-medium flex items-center gap-1.5">
+                                    <span>⏳</span> משך הקורס: 3 סמסטרים
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-2xl">
+                                    🪄
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-bold text-lightgold">אומנות השרביט ולחשי הגנה</h2>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                שליטה מדויקת בתיעול אנרגיה דרך ליבת השרביט, הקמת חומות מגן בלתי חדירות, לחשי נגד, ותרגול דו-קרב קוסמים אצילי ובטוח באולם המראות המכושף.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-400 mb-6 border-t border-antiquegold/20 pt-4">
+                                <li>✦ התאמת שרביט אישית וכיול ליבת הקסם</li>
+                                <li>✦ לחשי מגן רב-שכבתיים והסרת קללות</li>
+                                <li>✦ טורניר דו-קרב שנתי בגביע הכסף</li>
+                            </ul>
+                        </div>
+                        <button onclick="selectCourseAndContact('אומנות השרביט ולחשי הגנה')" class="btn-outline-gold w-full py-3 rounded-xl font-medium text-center">
+                            הרשמה למסלול זה ✦
+                        </button>
+                    </div>
+
+                    <!-- קורס 3: אסטרונומיה וחיזוי עתידות -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-950/80 text-purple-300 border border-purple-500/40">
+                                    רמת קושי: בינוני-מתקדם
+                                </span>
+                                <span class="text-sm text-antiquegold font-medium flex items-center gap-1.5">
+                                    <span>⏳</span> משך הקורס: 2 סמסטרים
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-2xl">
+                                    🔮
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-bold text-lightgold">אסטרונומיה וחיזוי עתידות</h2>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                תצפיות ליליות מראש מגדל הכוכבים בעזרת טלסקופי נחושת מכושפים. קריאת מפות אסטרליות, פענוח חלומות, קריאה בכדורי בדולח וזיהוי נבואות קדומות.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-400 mb-6 border-t border-antiquegold/20 pt-4">
+                                <li>✦ מיפוי תנועת כוכבי הלכת והשפעתם על עוצמת הלחשים</li>
+                                <li>✦ קריאה בעלי תה, רונות עתיקות ובדולח</li>
+                                <li>✦ סדנאות פיתוח "העין הפנימית" והאינטואיציה</li>
+                            </ul>
+                        </div>
+                        <button onclick="selectCourseAndContact('אסטרונומיה וחיזוי עתידות')" class="btn-outline-gold w-full py-3 rounded-xl font-medium text-center">
+                            הרשמה למסלול זה ✦
+                        </button>
+                    </div>
+
+                    <!-- קורס 4: אילוף יצורים קסומים -->
+                    <div class="mystic-card rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-950/80 text-sky-300 border border-sky-500/40">
+                                    רמת קושי: מתחילים ומתקדמים
+                                </span>
+                                <span class="text-sm text-antiquegold font-medium flex items-center gap-1.5">
+                                    <span>⏳</span> משך הקורס: שנה מלאה
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-2xl">
+                                    🐉
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-bold text-lightgold">טיפול ואילוף יצורים קסומים</h2>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed mb-6">
+                                לימוד מעשי בשמורת היער המכושף המקיפה את הטירה: תקשורת עם גריפינים, טיפול בסייחי חד-קרן, הבנת שפת עופות החול והתמודדות בטוחה עם דרקוני כיס.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-400 mb-6 border-t border-antiquegold/20 pt-4">
+                                <li>✦ רכיבה על היפוגריפים וניווט אווירי</li>
+                                <li>✦ וטרינריה קסומה ורקיחת משחות ריפוי ליצורים</li>
+                                <li>✦ שפת הגוף והאמון של יצורי פרא נדירים</li>
+                            </ul>
+                        </div>
+                        <button onclick="selectCourseAndContact('טיפול ואילוף יצורים קסומים')" class="btn-outline-gold w-full py-3 rounded-xl font-medium text-center">
+                            הרשמה למסלול זה ✦
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             עמוד 3: אודות (ABOUT)
+        ========================================================== -->
+        <section id="page-about" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+                
+                <!-- כותרת עמוד אודות -->
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-antiquegold text-sm tracking-widest block mb-2">מורשת של אלף שנים</span>
+                    <h1 class="text-4xl sm:text-5xl font-bold text-lightgold mb-4">סיפורה של אקדמיית אסטראליה</h1>
+                    <div class="ornate-divider">
+                        <span class="text-antiquegold">❖</span>
+                    </div>
+                </div>
+
+                <!-- היסטוריה וחזון חינוכי -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20 items-center">
+                    <div class="mystic-card rounded-2xl p-8 sm:p-10">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-lightgold mb-4">הייסוד בין ערפילי הזמן</h2>
+                        <p class="text-slate-300 leading-relaxed mb-4">
+                            אקדמיית אסטראליה נוסדה בשנת 1084 על ידי ארבעת חכמי המסדר העתיק, שביקשו להקים מקלט בטוח ונסתר מעיני בני האדם הרגילים, שבו יוכלו צעירים בעלי ניצוץ קסם לפתח את כישרונותיהם ללא פחד.
+                        </p>
+                        <p class="text-slate-300 leading-relaxed">
+                            הטירה עצמה נחצבה מתוך צוקי קריסטל מגנטיים בלב רכס הרי הקדם, ומוגנת במערכת לחשי הסוואה רבי-עוצמה הגורמים לה להיראות בעיני זרים כחורבה עתיקה אפופת ערפל.
+                        </p>
+                    </div>
+
+                    <div class="mystic-card rounded-2xl p-8 sm:p-10">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-lightgold mb-4">החזון החינוכי שלנו</h2>
+                        <p class="text-slate-300 leading-relaxed mb-4">
+                            אנו מאמינים כי קסם אמיתי אינו נמדד בעוצמת הלחש בלבד, אלא בחוכמה, באחריות ובטוהר הלב של המטיל אותו. תוכנית הלימודים שלנו מטפחת סקרנות אינטלקטואלית, משמעת עצמית ואחווה בין חניכים מכל הרקעים.
+                        </p>
+                        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-antiquegold/25 text-center">
+                            <div>
+                                <span class="block font-mystic text-2xl sm:text-3xl font-bold text-antiquegold">942</span>
+                                <span class="text-xs text-slate-400">שנות מסורת</span>
+                            </div>
+                            <div>
+                                <span class="block font-mystic text-2xl sm:text-3xl font-bold text-antiquegold">40K+</span>
+                                <span class="text-xs text-slate-400">ספרי לחשים</span>
+                            </div>
+                            <div>
+                                <span class="block font-mystic text-2xl sm:text-3xl font-bold text-antiquegold">100%</span>
+                                <span class="text-xs text-slate-400">הגנה קסומה</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- היכרות עם המנהל והסגל הבכיר -->
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-lightgold mb-3">המנהל והסגל הבכיר</h2>
+                    <p class="text-slate-400">המוחות המבריקים שמובילים את דור העתיד של עולם הקסם</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- מנהל האקדמיה -->
+                    <div class="mystic-card rounded-2xl p-8 text-center">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-b from-antiquegold/30 to-mysticpurple border-2 border-antiquegold flex items-center justify-center text-4xl mb-5 shadow-gold-glow">
+                            🧙‍♂️
+                        </div>
+                        <span class="text-xs text-antiquegold tracking-wider uppercase block mb-1">ראש האקדמיה</span>
+                        <h3 class="text-2xl font-bold text-lightgold mb-2">ארכי-מג אוריון כוכב-כסף</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            בעל עיטור מסדר המרלין מדרגה ראשונה. חוקר קסם עתיק ומתרגם מגילות אטלנטיס, המנהל את האקדמיה ביד רמה ובחמלה מזה 140 שנה.
+                        </p>
+                    </div>
+
+                    <!-- סגנית המנהל -->
+                    <div class="mystic-card rounded-2xl p-8 text-center">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-b from-antiquegold/30 to-mysticpurple border-2 border-antiquegold flex items-center justify-center text-4xl mb-5 shadow-gold-glow">
+                            🧙‍♀️
+                        </div>
+                        <span class="text-xs text-antiquegold tracking-wider uppercase block mb-1">דיקנית הפקולטה ללחשים</span>
+                        <h3 class="text-2xl font-bold text-lightgold mb-2">פרופסור סלסטיה לילה-אור</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            מומחית בעלת שם עולמי בלחשי הגנה, שדות כוח אסטרליים ושינוי צורה. מחברת הספר "מבוא לאומנות השרביט המודרנית".
+                        </p>
+                    </div>
+
+                    <!-- ראש מחלקת אלכימיה -->
+                    <div class="mystic-card rounded-2xl p-8 text-center">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-b from-antiquegold/30 to-mysticpurple border-2 border-antiquegold flex items-center justify-center text-4xl mb-5 shadow-gold-glow">
+                            ⚗️
+                        </div>
+                        <span class="text-xs text-antiquegold tracking-wider uppercase block mb-1">מאסטר האלכימיה</span>
+                        <h3 class="text-2xl font-bold text-lightgold mb-2">פרופסור גדעון אבן-חכמים</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            מגלה שיקוי הפניקס הזהוב וראש מעבדות התת-קרקע. ידוע בקפדנותו חסרת הפשרות ובאהבתו לצמחי מרפא נדירים.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- =========================================================
+             עמוד 4: צור קשר (CONTACT)
+        ========================================================== -->
+        <section id="page-contact" class="page-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+                
+                <div class="text-center max-w-3xl mx-auto mb-14">
+                    <span class="text-antiquegold text-sm tracking-widest block mb-2">לשכת הרישום והקבלה</span>
+                    <h1 class="text-4xl sm:text-5xl font-bold text-lightgold mb-4">שלחו אלינו מכתב ינשוף</h1>
+                    <p class="text-slate-300 text-lg">
+                        מרגישים שהניצוץ הקסום פועם בכם? מלאו את מגילת ההרשמה שלפניכם וינשוף השליחים שלנו ייצא לדרכו באופן מיידי.
+                    </p>
+                    <div class="ornate-divider">
+                        <span class="text-antiquegold">🪶</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                    
+                    <!-- טופס הרשמה אינטראקטיבי (7 עמודות) -->
+                    <div class="lg:col-span-7 mystic-card rounded-2xl p-8 sm:p-10">
+                        
+                        <!-- הודעת אישור קסומה (מוסתרת כברירת מחדל) -->
+                        <div id="owl-success-box" class="hidden text-center py-8 px-4">
+                            <div class="w-20 h-20 mx-auto rounded-full bg-antiquegold/20 border-2 border-antiquegold flex items-center justify-center text-4xl mb-6 animate-bounce shadow-gold-glow-strong">
+                                🦉
+                            </div>
+                            <h3 class="text-3xl font-bold text-lightgold mb-3">מכתב הינשוף נשלח בהצלחה!</h3>
+                            <p id="owl-success-text" class="text-slate-200 text-lg leading-relaxed max-w-md mx-auto mb-8">
+                                המגילה נחתמה בחותם שעווה מוזהב. שליח הינשופים המלכותי כבר פרש כנפיים בדרכו אל מגדל הקבלה של אסטראליה.
+                            </p>
+                            <button onclick="resetContactForm()" class="btn-outline-gold px-6 py-3 rounded-xl text-sm font-medium">
+                                שליחת מגילה נוספת ✦
+                            </button>
+                        </div>
+
+                        <!-- הטופס עצמו -->
+                        <form id="wizard-contact-form" onsubmit="handleOwlSubmit(event)" class="space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <!-- שם מלא -->
+                                <div>
+                                    <label for="applicant-name" class="block text-sm font-medium text-lightgold mb-2">
+                                        שם מלא (או כינוי קוסמים) *
+                                    </label>
+                                    <input type="text" id="applicant-name" required placeholder="לדוגמה: אריאל בן-כוכב"
+                                        class="mystic-input w-full px-4 py-3 rounded-xl text-base">
+                                </div>
+
+                                <!-- גיל -->
+                                <div>
+                                    <label for="applicant-age" class="block text-sm font-medium text-lightgold mb-2">
+                                        גיל המועמד/ת *
+                                    </label>
+                                    <input type="number" id="applicant-age" min="11" max="120" required placeholder="11 - 120"
+                                        class="mystic-input w-full px-4 py-3 rounded-xl text-base">
+                                </div>
+                            </div>
+
+                            <!-- תחום עניין מועדף -->
+                            <div>
+                                <label for="applicant-interest" class="block text-sm font-medium text-lightgold mb-2">
+                                    תחום התמחות מועדף *
+                                </label>
+                                <select id="applicant-interest" required class="mystic-input w-full px-4 py-3 rounded-xl text-base">
+                                    <option value="" disabled selected>בחרו מסלול לימודים...</option>
+                                    <option value="רוקחות ושיקויים מתקדמים">🧪 רוקחות ושיקויים מתקדמים</option>
+                                    <option value="אומנות השרביט ולחשי הגנה">🪄 אומנות השרביט ולחשי הגנה</option>
+                                    <option value="אסטרונומיה וחיזוי עתידות">🔮 אסטרונומיה וחיזוי עתידות</option>
+                                    <option value="טיפול ואילוף יצורים קסומים">🐉 טיפול ואילוף יצורים קסומים</option>
+                                    <option value="מסלול רב-תחומי (כללי)">✨ מסלול רב-תחומי (הכשרה כללית)</option>
+                                </select>
+                            </div>
+
+                            <!-- הודעה / סיפור אישי -->
+                            <div>
+                                <label for="applicant-message" class="block text-sm font-medium text-lightgold mb-2">
+                                    ספרו לנו על החוויה הקסומה הראשונה שלכם *
+                                </label>
+                                <textarea id="applicant-message" rows="4" required placeholder="כתבו כאן את פנייתכם אל ועדת הקבלה..."
+                                    class="mystic-input w-full px-4 py-3 rounded-xl text-base resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn-gold w-full py-4 rounded-xl text-lg shadow-gold-glow flex items-center justify-center gap-2">
+                                <span>חתום ושלח מכתב ינשוף</span>
+                                <span>🦉</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- פרטי יצירת קשר קסומים (5 עמודות) -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="mystic-card rounded-2xl p-8">
+                            <h3 class="text-2xl font-bold text-lightgold mb-6 border-b border-antiquegold/25 pb-3">
+                                דרכי הגעה ותקשורת אסטרלית
+                            </h3>
+                            
+                            <ul class="space-y-6">
+                                <li class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-antiquegold shrink-0 mt-1">
+                                        📍
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lightgold text-lg">מיקום הטירה</h4>
+                                        <p class="text-slate-300 text-sm leading-relaxed">
+                                            פסגת הר הערפל הצפוני, מעבר לשער האבן השביעי (מוסתר מעיני חסרי-קסם באמצעות לחש השכחה).
+                                        </p>
+                                    </div>
+                                </li>
+
+                                <li class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-antiquegold shrink-0 mt-1">
+                                        🕰️
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lightgold text-lg">שעות קבלה במגדל המזרחי</h4>
+                                        <p class="text-slate-300 text-sm leading-relaxed">
+                                            ימים א'–ה': מזריחת החמה ועד שקיעת הירח הכסוף.<br>
+                                            בלילות ירח מלא: קבלת קהל דחופה דרך רשת אבקת הפלו בלבד.
+                                        </p>
+                                    </div>
+                                </li>
+
+                                <li class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-mysticpurple/80 border border-antiquegold/40 flex items-center justify-center text-antiquegold shrink-0 mt-1">
+                                        🔥
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lightgold text-lg">קואורדינטות רשת הפלו</h4>
+                                        <p class="text-slate-300 text-sm leading-relaxed">
+                                            הגו בבירור באח המבוערת: <span class="text-antiquegold font-semibold">"אסטראליה – אולם המבוא המוזהב"</span>.
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- ציטוט מעורר השראה -->
+                        <div class="mystic-card rounded-2xl p-6 text-center bg-gradient-to-br from-mysticpurple/40 to-midnight/90">
+                            <p class="font-mystic italic text-lg text-lightgold mb-2">
+                                "הקסם אינו נמצא בשרביט שבידך, אלא באומץ שבלבך להאמין בבלתי אפשרי."
+                            </p>
+                            <span class="text-xs text-antiquegold">— מתוך מגילת הייסוד של אסטראליה</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- כותרת תחתונה (Footer) -->
+    <footer class="relative z-10 bg-midnight/95 border-t border-antiquegold/25 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="text-antiquegold">✦</span>
+                <span class="font-mystic text-lightgold font-semibold">אקדמיית אסטראליה</span>
+                <span>— כל הזכויות שמורות למועצת הקוסמים העליונה © 2026</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <button onclick="navigateTo('home')" class="hover:text-antiquegold transition-colors">בית</button>
+                <button onclick="navigateTo('courses')" class="hover:text-antiquegold transition-colors">קורסים</button>
+                <button onclick="navigateTo('about')" class="hover:text-antiquegold transition-colors">אודות</button>
+                <button onclick="navigateTo('contact')" class="hover:text-antiquegold transition-colors">צור קשר</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- לוגיקת JavaScript לניווט SPA, אנימציות כוכבים וטיפול בטופס -->
+    <script>
+        /**
+         * יצירת שדה כוכבים מנצנצים ברקע להשלמת האווירה הקסומה
+         */
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            if (!starfield) return;
+
+            const starCount = 75;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // מיקום, גודל ומשך אנימציה אקראיים
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 2.5 + 1;
+                const duration = Math.random() * 4 + 2.5;
+                const delay = Math.random() * 5;
+
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.animationDelay = `${delay}s`;
+
+                starfield.appendChild(star);
+            }
+        }
+
+        /**
+         * פונקציית ניווט SPA חלקה בין 4 העמודים ללא רענון דף
+         * @param {string} pageId - מזהה העמוד ('home', 'courses', 'about', 'contact')
+         */
+        function navigateTo(pageId) {
+            // 1. הסתרת כל העמודים
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // 2. הצגת העמוד המבוקש והפעלת אנימציית fade-in מחדש
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            // 3. עדכון מצב הפריט הפעיל בתפריט הדסקטופ
+            const desktopLinks = document.querySelectorAll('.nav-link');
+            desktopLinks.forEach(link => {
+                if (link.getAttribute('data-nav') === pageId) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            // 4. עדכון מצב הפריט הפעיל בתפריט המובייל
+            const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+            mobileLinks.forEach(link => {
+                if (link.getAttribute('data-nav') === pageId) {
+                    link.classList.add('text-lightgold', 'bg-antiquegold/15', 'border', 'border-antiquegold/30');
+                    link.classList.remove('text-slate-200');
+                } else {
+                    link.classList.remove('text-lightgold', 'bg-antiquegold/15', 'border', 'border-antiquegold/30');
+                    link.classList.add('text-slate-200');
+                }
+            });
+
+            // 5. סגירת תפריט המובייל אם הוא פתוח
+            closeMobileMenu();
+
+            // 6. גלילה חלקה לראש העמוד
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /**
+         * פתיחה וסגירה של תפריט ההמבורגר במובייל
+         */
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('mobile-menu-btn');
+            const iconHamburger = document.getElementById('icon-hamburger');
+            const iconClose = document.getElementById('icon-close');
+
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                iconHamburger.classList.add('hidden');
+                iconClose.classList.remove('hidden');
+                btn.setAttribute('aria-expanded', 'true');
+            } else {
+                closeMobileMenu();
+            }
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('mobile-menu-btn');
+            const iconHamburger = document.getElementById('icon-hamburger');
+            const iconClose = document.getElementById('icon-close');
+
+            if (!menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                iconHamburger.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        /**
+         * מעבר מעמוד הקורסים לטופס צור קשר עם בחירה מוקדמת של הקורס
+         */
+        function selectCourseAndContact(courseName) {
+            navigateTo('contact');
+            const interestSelect = document.getElementById('applicant-interest');
+            if (interestSelect) {
+                interestSelect.value = courseName;
+            }
+            // איפוס הודעת הצלחה קודמת אם הייתה
+            resetContactForm(false);
+        }
+
+        /**
+         * טיפול בשליחת טופס צור קשר והצגת הודעת "מכתב ינשוף נשלח בהצלחה"
+         */
+        function handleOwlSubmit(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('applicant-name').value.trim();
+            const interestInput = document.getElementById('applicant-interest').value;
+            
+            const form = document.getElementById('wizard-contact-form');
+            const successBox = document.getElementById('owl-success-box');
+            const successText = document.getElementById('owl-success-text');
+
+            if (nameInput) {
+                successText.innerHTML = `תודה לך, <strong class="text-antiquegold">${nameInput}</strong>! המגילה עבור מסלול <strong class="text-lightgold">${interestInput}</strong> נחתמה בחותם שעווה מוזהב. שליח הינשופים המלכותי כבר פרש כנפיים בדרכו אל מגדל הקבלה של אסטראליה.`;
+            }
+
+            form.classList.add('hidden');
+            successBox.classList.remove('hidden');
+        }
+
+        /**
+         * איפוס הטופס להודעה חדשה
+         */
+        function resetContactForm(clearFields = true) {
+            const form = document.getElementById('wizard-contact-form');
+            const successBox = document.getElementById('owl-success-box');
+
+            if (clearFields) {
+                form.reset();
+            }
+            successBox.classList.add('hidden');
+            form.classList.remove('hidden');
+        }
+
+        // אתחול שדה הכוכבים בעת טעינת הדף
+        window.addEventListener('DOMContentLoaded', () => {
+            createStarfield();
+        });
+    </script>
+</body>
+</html>
